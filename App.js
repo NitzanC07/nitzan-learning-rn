@@ -1,40 +1,31 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
+import GetItem from "./components/GetItem";
+import InputItem from "./components/InputItem";
 
 export default function App() {
-  const [enteredItemText, setEnteredItemText] = useState("");
   const [items, setItems] = useState([]);
-  const itemInputHandler = (enteredText) => {
-    setEnteredItemText(enteredText);
+
+  const addItemHandler = (enteredItemText) => {
+    setItems((currentItems) => [
+      ...currentItems,
+      { text: enteredItemText, id: Math.random().toString() },
+    ]);
   };
 
-  const addItem = () => {
-    setItems((currentItems) => [...currentItems, {text: enteredItemText, key: Math.random().toString()}]);
-    setEnteredItemText("");
+  const handleDeletItem = (id) => {
+    console.log("DELETE", id);
+    return setItems((currentItems) =>
+      currentItems.filter((item) => item.id !== id)
+    );
   };
 
   return (
     <View style={styles.appContainer}>
       <StatusBar />
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="הכנס פריט..."
-          onChangeText={itemInputHandler}
-          value={enteredItemText}
-        />
-        <Button title="הוסף פריט" onPress={addItem} />
-      </View>
+      <InputItem onAddItem={addItemHandler} />
 
       <View style={styles.itemsContainer}>
         {/** כדי לתת אפשרות של גלילת המסך אם כמות הפריטים חורגת מגודל המסך */}
@@ -45,20 +36,22 @@ export default function App() {
             </View>
           ))}
         </ScrollView> */}
-        {/** אם יש לנו כמות גדולה מאוד של פריטים, למשל 1000 פריטים, זה יכול להכביד מאוד
+        {/*
+         * אם יש לנו כמות גדולה מאוד של פריטים, למשל 1000 פריטים, זה יכול להכביד מאוד
          * על הריצה של האפליקציה, לכן כדאי לעשות מיטוב (אופטימיזציה) ולרנדר למסך רק את
          * הפריטים שמוצגים באותו רגע.
          */}
         <FlatList
           data={items}
           renderItem={(itemData) => {
-
             return (
-              <View key={itemData.item.key} style={styles.item}>
-                <Text style={styles.itemText}>{itemData.item.text}</Text>
-              </View>
-            )}
-          }
+              <GetItem
+                id={itemData.item.id}
+                text={itemData.item.text}
+                onDeleteItem={handleDeletItem}
+              />
+            );
+          }}
         />
       </View>
 
@@ -86,35 +79,10 @@ const styles = StyleSheet.create({
     paddingVertical: 25,
     paddingHorizontal: 15,
   },
-  inputContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingBottom: 25,
-    borderBottomWidth: 1,
-    borderBottomColor: "#777",
-    backgroundColor: "#ddd",
-  },
   itemsContainer: {
     flex: 9,
     marginTop: 10,
     backgroundColor: "#eee",
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: "#999",
-    width: "75%",
-    height: 40,
-  },
-  item: {
-    margin: 8,
-    padding: 8,
-    borderRadius: 6,
-    backgroundColor: "#5e0acc",
-  },
-  itemText: {
-    color: "white",
   },
 
   // * Exmaple of flexBox.
