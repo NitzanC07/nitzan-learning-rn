@@ -1,11 +1,16 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Button } from "react-native";
 import GetItem from "./components/GetItem";
 import InputItem from "./components/InputItem";
 
 export default function App() {
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [items, setItems] = useState([]);
+
+  const modalVisibleHandler = () => {
+    setIsModalVisible(true);
+  }
 
   const addItemHandler = (enteredItemText) => {
     setItems((currentItems) => [
@@ -21,14 +26,20 @@ export default function App() {
     );
   };
 
+  
+
   return (
     <View style={styles.appContainer}>
       <StatusBar />
 
-      <InputItem onAddItem={addItemHandler} />
+      <Button title="Add New Item" color="#f00" onPress={modalVisibleHandler} />
+      <InputItem visible={isModalVisible} onAddItem={addItemHandler} />
 
       <View style={styles.itemsContainer}>
-        {/** כדי לתת אפשרות של גלילת המסך אם כמות הפריטים חורגת מגודל המסך */}
+      
+        {
+        // * כדי לתת אפשרות של גלילת המסך אם כמות הפריטים חורגת מגודל המסך 
+        }
         {/* <ScrollView>
           {items.map((item) => (
             <View key={item} style={styles.item}>
@@ -36,11 +47,11 @@ export default function App() {
             </View>
           ))}
         </ScrollView> */}
-        {/*
-         * אם יש לנו כמות גדולה מאוד של פריטים, למשל 1000 פריטים, זה יכול להכביד מאוד
-         * על הריצה של האפליקציה, לכן כדאי לעשות מיטוב (אופטימיזציה) ולרנדר למסך רק את
-         * הפריטים שמוצגים באותו רגע.
-         */}
+        {
+         // * אם יש לנו כמות גדולה מאוד של פריטים, למשל 1000 פריטים, זה יכול להכביד מאוד
+         // * על הריצה של האפליקציה, לכן כדאי לעשות מיטוב (אופטימיזציה) ולרנדר למסך רק את
+         // * הפריטים שמוצגים באותו רגע.
+         }
         <FlatList
           data={items}
           renderItem={(itemData) => {
